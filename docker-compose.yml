@@ -1,0 +1,72 @@
+#
+# Docker NodeJS
+# Example Docker Compose file
+#
+
+# For more information about the directives defined here:
+# https://docs.docker.com/compose/compose-file/
+
+# Docker compose file version
+version: "3.8"
+
+services:
+  app:
+    build: .
+    working_dir: /app
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - .:/app
+      - /app/node_modules/bcrypt
+    command: npm run watch
+    depends_on:
+      - postgres
+      - redis
+
+  redis:
+    image: redis:alpine
+    container_name: redis_cache
+    ports:
+      - ${HOST_PORT_REDIS}:${CONTAINER_PORT_REDIS}
+    volumes:
+      - ./redis-data2:/data
+
+  postgres:
+    image: postgres:15.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=concert_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - DB_SCHEMA=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=postgres
+      - SECRET=SECRET
+    logging:
+      options:
+        max-size: 10m
+        max-file: '10' # good
+    ports:
+      - ${HOST_PORT}:${CONTAINER_PORT}
+    volumes:
+      # chmod +x ./postgres-initdb.sh
+      # chmod +x ./sql
+      - postgres-data2:/var/lib/postgresql/data
+      - ./postgres-initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
+      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      # copy the sql script to fill tables
+      - ./sql/fill_tables.sql:/docker-entrypoint-initdb.d/fill_tables.sql
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_NICE
+
+volumes:
+  postgres-data2:
+
+#networks:
+#  docker-graphql-node-ddd-postgre-auth_common_network:
+#    external: true
