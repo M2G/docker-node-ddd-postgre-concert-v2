@@ -1,7 +1,5 @@
 /*eslint-disable*/
-import { Router, Request, Response, NextFunction } from 'express';
 import Status from 'http-status';
-const router = Router();
 
 const time =
   process.env.NODE_ENV === 'development'
@@ -11,18 +9,21 @@ const time =
 const TOKEN_EXPIRED_ERROR = 'TokenExpiredError';
 const FAIL_AUTH = 'Failed to authenticate token is expired.';
 
-export default ({ response: { Fail }, jwt }: any) =>
-  router.use((req: Request, res: Response, next: NextFunction) => {
-    const extractToken = req?.headers?.authorization?.startsWith('Bearer ');
+export default ({ response: { Fail }, jwt }: any) => {
+
+  return (request: any, reply: any, next: any) => {
+    console.log('VERIFY');
+    const extractToken =
+      request.headers?.authorization?.startsWith('Bearer ');
 
     if (extractToken) {
-      const token = req?.headers?.authorization?.split(' ')?.[1];
+      const token = request.headers?.authorization?.split(' ')?.[1];
 
       try {
         jwt.verify({ maxAge: time })(token);
-      } catch (e: any) {
+      } catch (e) {
         if (e.name === TOKEN_EXPIRED_ERROR) {
-          return res.status(Status.UNAUTHORIZED).json(
+          return reply.code(Status.UNAUTHORIZED).send(
             Fail({
               success: false,
               expireTime: true,
@@ -31,7 +32,7 @@ export default ({ response: { Fail }, jwt }: any) =>
           );
         }
 
-        return res.status(Status.BAD_REQUEST).json(
+        return reply.code(Status.BAD_REQUEST).send(
           Fail({
             success: false,
             message: Status[Status.BAD_REQUEST],
@@ -42,10 +43,11 @@ export default ({ response: { Fail }, jwt }: any) =>
       return next();
     }
 
-    return res.status(Status.UNAUTHORIZED).json(
+    return reply.code(Status.UNAUTHORIZED).send(
       Fail({
         success: false,
         message: 'No token provided.',
       }),
     );
-  });
+  }
+}

@@ -10,9 +10,13 @@ export default ({
   logger,
   response: { Success, Fail },
 }: any) => {
+
+
+
+
   const router = Router();
 
-  router.get('/', async (req: Request, res: Response) => {
+  async function getConcerts(request, reply) {
     const { query } = req;
     const { filters, pageSize, page } = query;
 
@@ -26,9 +30,9 @@ export default ({
       logger.error(error);
       res.status(Status.BAD_REQUEST).json(Fail(error.message));
     }
-  });
+  }
 
-  router.get('/:id', async (req: Request, res: Response): Promise<Response> => {
+  async function getConcert(request, reply) {
     const { params } = req;
     const { id } = params;
 
@@ -48,7 +52,7 @@ export default ({
       logger.error(error);
       return res.status(Status.BAD_REQUEST).json(Fail(error.message));
     }
-  });
+  };
 
   return router;
 };
