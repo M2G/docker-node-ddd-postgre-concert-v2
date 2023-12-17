@@ -23,7 +23,7 @@ export default ({
   verify,
 }: any) => {
 
-  async function getConcerts(request: FastifyRequest<IUserRequest>,
+  async function handlerGetConcerts(request: FastifyRequest<IUserRequest>,
                              reply: FastifyReply<
                                RawServerDefault,
                                RawRequestDefaultExpression,
@@ -45,7 +45,7 @@ export default ({
     }
   }
 
-  async function getConcert(request: FastifyRequest<IUserRequest>,
+  async function handlerGetConcert(request: FastifyRequest<IUserRequest>,
                             reply: FastifyReply<
                               RawServerDefault,
                               RawRequestDefaultExpression,
@@ -74,8 +74,8 @@ export default ({
   }
 
   const routerConcerts = {
-    beforeHandler: [verify, auth.authenticate],
-    handler: getConcerts,
+    //beforeHandler: [verify, auth.authenticate],
+    handler: handlerGetConcerts,
     method: 'GET',
     schema: {},
     url: '/concerts',
@@ -85,7 +85,7 @@ export default ({
 
   const routerConcertById = {
     beforeHandler: [verify, auth.authenticate],
-    handler: getConcert,
+    handler: handlerGetConcert,
     method: 'GET',
     schema: {},
     url: '/concert/:id',
@@ -93,8 +93,8 @@ export default ({
     // preHandler: auth.authenticate,
   };
 
-  return {
-    ...routerConcerts,
-    ...routerConcertById,
-  }
+  return [
+    routerConcerts,
+    routerConcertById,
+  ]
 };

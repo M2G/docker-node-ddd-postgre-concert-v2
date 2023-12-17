@@ -25,6 +25,8 @@ export default ({ config, logger }) => {
     origin: ['http://localhost:3002', 'http://localhost:3003'],
   });
 
+  console.log('------------------------------', concerts().router)
+
   const router = {
     [ROUTES.INDEX]: index(),
     [ROUTES.CONCERTS]: concerts().router,

@@ -19,8 +19,8 @@ export default ({
                 }: IApp) => {
   void fastify.register(auth.initialize());
   void fastify.register((app, _, done) => {
-    Object.values(router).forEach((route: any) => {
-      app.route(route);
+    Object.values(router).forEach((route) => {
+      Array.isArray(route) ? app.route(...route) : app.route(route);
     });
     done();
   });
