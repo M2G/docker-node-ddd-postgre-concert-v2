@@ -1,12 +1,14 @@
-import { Router } from 'express';
 import Status from 'http-status';
 
 export default () => {
-  const router = Router();
+  const route = {
+    method: 'GET',
+    url: '/',
+    handler: (request, reply) => {
+      reply.code(Status.OK).send({ hello: 'API working' });
+    },
+    schema: {},
+  }
 
-  router.get('/', (req: any, res: any) => {
-    res.status(Status.OK).json({ status: 'API working' });
-  });
-
-  return router;
+  return route;
 };

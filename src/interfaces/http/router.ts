@@ -11,30 +11,30 @@ const ROUTES = {
   INDEX: '/',
 };
 
-export default ({ config, logger, database, verify }: any) => {
-
+export default ({ config, logger }) => {
   if (config.env !== 'test') {
     fastify.addHook('preHandler', (_, __, done) => {
       httpLogger(logger);
       done();
     });
+  }
 
-    void fastify.register(cors, {
-      allowedHeaders: ['Content-Type', 'Authorization'],
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
-      origin: ['http://localhost:3002', 'http://localhost:3003'],
-    });
+  void fastify.register(cors, {
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: ['http://localhost:3002', 'http://localhost:3003'],
+  });
 
-    const router = {
-      [ROUTES.INDEX]: index(),
-      [ROUTES.CONCERTS]: concerts().router,
-    };
+  const router = {
+    [ROUTES.INDEX]: index(),
+    [ROUTES.CONCERTS]: concerts().router,
+  };
 
-    fastify.setErrorHandler(function (error, request, reply) {
-      errorHandler(error, request, reply, logger, config);
-    });
+  fastify.setErrorHandler(function (error, request, reply) {
+    errorHandler(error, request, reply, logger, config);
+  });
 
-    return router;
+  return router;
 
   /*
   const router = Router();
@@ -62,6 +62,4 @@ export default ({ config, logger, database, verify }: any) => {
   }));
 
   return router;*/
-
-
 };

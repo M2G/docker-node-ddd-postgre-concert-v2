@@ -1,14 +1,15 @@
 import container from '../../../../container';
-import router from './router';
 import instance from './instance';
+import router from './router';
 
 export default () => {
   const { cradle } = container;
 
   const {
-    logger,
-    response: { Success, Fail },
     auth,
+    logger,
+    response: { Fail, Success },
+    verify,
   } = cradle;
   const app = instance();
 
@@ -18,6 +19,7 @@ export default () => {
       auth,
       logger,
       response: { Fail, Success },
+      verify,
       ...app,
     }),
   };

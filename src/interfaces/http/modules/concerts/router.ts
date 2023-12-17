@@ -1,23 +1,36 @@
 /* eslint-disable*/
 import Status from 'http-status';
-import { Router, Request, Response } from 'express';
 import IUser from 'core/IUser';
+import { FastifyRequest, FastifyReply, RawReplyDefaultExpression, RawRequestDefaultExpression, RawServerDefault } from 'fastify';
+import { RouteGenericInterface } from "fastify/types/route";
+
+interface IUser {
+  firstname: string;
+  lastname: string;
+}
+
+interface IUserRequest extends RouteGenericInterface {
+  Params: { username: string };
+  Reply: IUser; // put the response payload interface here
+}
 
 export default ({
-  jwt,
   getUseCase,
   getOneUseCase,
   logger,
   response: { Success, Fail },
+  auth,
+  verify,
 }: any) => {
 
-
-
-
-  const router = Router();
-
-  async function getConcerts(request, reply) {
-    const { query } = req;
+  async function getConcerts(request: FastifyRequest<IUserRequest>,
+                             reply: FastifyReply<
+                               RawServerDefault,
+                               RawRequestDefaultExpression,
+                               RawReplyDefaultExpression,
+                               IUserRequest // put the request interface here
+                             >) {
+    const { query } = request;
     const { filters, pageSize, page } = query;
 
     try {
@@ -25,19 +38,25 @@ export default ({
         filters ? { filters } : pageSize && page ? { pageSize, page } : {},
       );
 
-      res.status(Status.OK).json(Success(data));
+      reply.code(Status.OK).send(Success(data));
     } catch (error) {
       logger.error(error);
-      res.status(Status.BAD_REQUEST).json(Fail(error.message));
+      reply.code(Status.BAD_REQUEST).send(Fail(error.message));
     }
   }
 
-  async function getConcert(request, reply) {
-    const { params } = req;
+  async function getConcert(request: FastifyRequest<IUserRequest>,
+                            reply: FastifyReply<
+                              RawServerDefault,
+                              RawRequestDefaultExpression,
+                              RawReplyDefaultExpression,
+                              IUserRequest // put the request interface here
+                            >) {
+    const { params } = request;
     const { id } = params;
 
     if (!id)
-      return res
+      return reply
         .status(Status.UNPROCESSABLE_ENTITY)
         .json(Fail('Invalid id parameters in request.'));
 
@@ -47,12 +66,35 @@ export default ({
       console.log('data data data data', data);
 
       logger.debug(data);
-      return res.status(Status.OK).json(Success(data));
+      return reply.code(Status.OK).send(Success(data));
     } catch (error: any) {
       logger.error(error);
-      return res.status(Status.BAD_REQUEST).json(Fail(error.message));
+      return reply.code(Status.BAD_REQUEST).send(Fail(error.message));
     }
+  }
+
+  const routerConcerts = {
+    beforeHandler: [verify, auth.authenticate],
+    handler: getConcerts,
+    method: 'GET',
+    schema: {},
+    url: '/concerts',
+    // preValidation: verify,
+    // preHandler: auth.authenticate,
   };
 
-  return router;
+  const routerConcertById = {
+    beforeHandler: [verify, auth.authenticate],
+    handler: getConcert,
+    method: 'GET',
+    schema: {},
+    url: '/concert/:id',
+    // preValidation: verify,
+    // preHandler: auth.authenticate,
+  };
+
+  return {
+    ...routerConcerts,
+    ...routerConcertById,
+  }
 };
