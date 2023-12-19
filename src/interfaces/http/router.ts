@@ -1,10 +1,10 @@
 import cors from '@fastify/cors';
+import { fastify } from 'interfaces/http/server';
 import httpLogger from './middlewares/http_logger';
 import errorHandler from './middlewares/error_handler';
 // controller
 import index from './modules';
 import concerts from './modules/concerts';
-import { fastify } from 'interfaces/http/server';
 
 const ROUTES = {
   CONCERTS: '/concerts',
@@ -25,9 +25,14 @@ export default ({ config, logger }) => {
     origin: ['http://localhost:3002', 'http://localhost:3003'],
   });
 
-  console.log('------------------------------', concerts().router)
-
-  const router = {
+  const router: {
+    [key: string]: () => {
+      handler: (request: any, reply: any) => void;
+      method: string;
+      schema: {};
+      url: string;
+    };
+  } = {
     [ROUTES.INDEX]: index(),
     [ROUTES.CONCERTS]: concerts().router,
   };

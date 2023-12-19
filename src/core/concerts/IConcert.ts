@@ -5,6 +5,7 @@ interface IArtist {
 }
 
 interface IConcert {
+  artist: IArtist;
   city: string;
   concert_id: number;
   datetime: Date;
@@ -15,7 +16,6 @@ interface IConcert {
   status: string;
   type: string;
   uri: string;
-  artist: IArtist;
 }
 
 export default IConcert;
