@@ -25,16 +25,14 @@ export default ({ config, logger }) => {
     origin: ['http://localhost:3002', 'http://localhost:3003'],
   });
 
-  const router: {
-    [key: string]: () => {
+  const router: Record<string, () => {
       handler: (request: any, reply: any) => void;
       method: string;
       schema: {};
       url: string;
-    };
-  } = {
-    [ROUTES.INDEX]: index(),
+    }> = {
     [ROUTES.CONCERTS]: concerts().router,
+    [ROUTES.INDEX]: index(),
   };
 
   fastify.setErrorHandler(function (error, request, reply) {

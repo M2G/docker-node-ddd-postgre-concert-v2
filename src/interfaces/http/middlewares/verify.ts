@@ -9,7 +9,7 @@ const time =
 const TOKEN_EXPIRED_ERROR = 'TokenExpiredError';
 const FAIL_AUTH = 'Failed to authenticate token is expired.';
 
-export default ({ response: { Fail }, jwt }: any) => {
+export default ({ response: { Fail }, jwt }) => {
 
   return (request: any, reply: any, next: any) => {
     console.log('VERIFY');

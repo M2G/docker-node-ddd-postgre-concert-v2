@@ -28,7 +28,7 @@ export default ({
   model2,
   jwt,
 }: IConcertRepository): IConcertRepositoryReturnType => {
-  const getAll = async ({
+  async function getAll({
     filters,
     pageSize = 5,
     page = 1,
@@ -38,7 +38,7 @@ export default ({
     pageSize: number;
     page: number;
     attributes: string[] | undefined;
-  }): Promise<unknown> => {
+  }): Promise<unknown> {
     if (page < 0) throw new Error('`page` is not a number >= 0');
     if (pageSize < 0) throw new Error('`pageSize` is not a number >= 0');
 
@@ -244,9 +244,9 @@ export default ({
     } catch (error) {
       throw new Error(error as string | undefined);
     }
-  };
+  }
 
-  const findOne = async ({ id }: { id: number }): Promise<unknown | null> => {
+  async function findOne({ id }: { id: number }): Promise<unknown | null> {
     try {
       const data: IConcert = await model.findByPk(id, { raw: true });
       if (!data) return null;
@@ -254,9 +254,11 @@ export default ({
     } catch (error) {
       throw new Error(error as string | undefined);
     }
-  };
+  }
 
-  const destroy = (...args: any[]) => model.destroy(...args);
+  function destroy(...args: any[]) {
+    return model.destroy(...args);
+  }
 
   return {
     getAll,
