@@ -18,9 +18,9 @@ export default ({
   concertsRepository: any;
   logger: any;
 }) => {
-  const all = async ({
+  async function all ({
     ...arg
-  }: ArrayLike<unknown> | Record<string, unknown>) => {
+  }: ArrayLike<unknown> | Record<string, unknown>) {
     try {
       if (arg && Object.values(arg).filter(Boolean).length) {
         return concertsRepository.getAll({
@@ -44,7 +44,7 @@ export default ({
     } catch (error: unknown) {
       throw new Error(error as string | undefined);
     }
-  };
+  }
 
   return {
     all,
