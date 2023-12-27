@@ -1,13 +1,9 @@
 /* eslint-disable*/
 import Status from 'http-status';
-import IUser from 'core/IUser';
+
+import IUser from 'core/users'
 import { FastifyRequest, FastifyReply, RawReplyDefaultExpression, RawRequestDefaultExpression, RawServerDefault } from 'fastify';
 import { RouteGenericInterface } from "fastify/types/route";
-
-interface IUser {
-  firstname: string;
-  lastname: string;
-}
 
 interface IUserRequest extends RouteGenericInterface {
   Params: { username: string };

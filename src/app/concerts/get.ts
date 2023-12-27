@@ -18,7 +18,7 @@ export default ({
   concertsRepository: any;
   logger: any;
 }) => {
-  async function all ({
+  async function all({
     ...arg
   }: ArrayLike<unknown> | Record<string, unknown>) {
     try {
